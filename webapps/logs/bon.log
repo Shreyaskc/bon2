@@ -1,0 +1,53 @@
+2019-01-03 21:47:24 DEBUG SingleClientConnManager-getConnection:195 - Get connection for route HttpRoute[{s}->https://fcm.googleapis.com]
+2019-01-03 21:47:25 DEBUG RequestAddCookies-process:131 - CookieSpec selected: best-match
+2019-01-03 21:47:25 DEBUG DefaultHttpClient-execute:481 - Attempt 1 to execute request
+2019-01-03 21:47:25 DEBUG DefaultClientConnection-sendRequestHeader:244 - Sending request: POST /fcm/send HTTP/1.1
+2019-01-03 21:47:25 DEBUG wire-wire:78 - >> "POST /fcm/send HTTP/1.1[EOL]"
+2019-01-03 21:47:25 DEBUG wire-wire:78 - >> "Content-type: application/json[EOL]"
+2019-01-03 21:47:25 DEBUG wire-wire:78 - >> "Authorization: key=AIzaSyCFfDGhm0Ix5z7Yp_cVcahQHZG5aGjHXCc[EOL]"
+2019-01-03 21:47:25 DEBUG wire-wire:78 - >> "Content-Length: 273[EOL]"
+2019-01-03 21:47:25 DEBUG wire-wire:78 - >> "Host: fcm.googleapis.com[EOL]"
+2019-01-03 21:47:25 DEBUG wire-wire:78 - >> "Connection: Keep-Alive[EOL]"
+2019-01-03 21:47:25 DEBUG wire-wire:78 - >> "User-Agent: Apache-HttpClient/4.0.1 (java 1.5)[EOL]"
+2019-01-03 21:47:25 DEBUG wire-wire:78 - >> "Expect: 100-Continue[EOL]"
+2019-01-03 21:47:25 DEBUG wire-wire:78 - >> "[EOL]"
+2019-01-03 21:47:25 DEBUG headers-sendRequestHeader:248 - >> POST /fcm/send HTTP/1.1
+2019-01-03 21:47:25 DEBUG headers-sendRequestHeader:251 - >> Content-type: application/json
+2019-01-03 21:47:25 DEBUG headers-sendRequestHeader:251 - >> Authorization: key=AIzaSyCFfDGhm0Ix5z7Yp_cVcahQHZG5aGjHXCc
+2019-01-03 21:47:25 DEBUG headers-sendRequestHeader:251 - >> Content-Length: 273
+2019-01-03 21:47:25 DEBUG headers-sendRequestHeader:251 - >> Host: fcm.googleapis.com
+2019-01-03 21:47:25 DEBUG headers-sendRequestHeader:251 - >> Connection: Keep-Alive
+2019-01-03 21:47:25 DEBUG headers-sendRequestHeader:251 - >> User-Agent: Apache-HttpClient/4.0.1 (java 1.5)
+2019-01-03 21:47:25 DEBUG headers-sendRequestHeader:251 - >> Expect: 100-Continue
+2019-01-03 21:47:27 DEBUG wire-wire:78 - >> "{"to":"f_JRfXJMD6w:APA91bHBCsNjcVTP8AMEO7xj1ejm-ai78lOHRAEsgJrYc7npWVq9GuHv-fu3iGQd5AJ4q2zBakSiX43HD1wuhsnLHEZByP5SYJ1nHz2c2uHCm3nlU6UORAT8MyVFAzngC4zvhYJP8rlm","priority":"high","data":{"page":"comment","id":"idVal"},"notification":{"title":"title app","body":"body app"}}"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "HTTP/1.1 200 OK[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "Content-Type: application/json; charset=UTF-8[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "Date: Thu, 03 Jan 2019 16:17:28 GMT[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "Expires: Thu, 03 Jan 2019 16:17:28 GMT[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "Cache-Control: private, max-age=0[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "X-Content-Type-Options: nosniff[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "X-Frame-Options: SAMEORIGIN[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "X-XSS-Protection: 1; mode=block[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "Server: GSE[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "Alt-Svc: quic=":443"; ma=2592000; v="44,43,39,35"[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "Accept-Ranges: none[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "Vary: Accept-Encoding[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "Transfer-Encoding: chunked[EOL]"
+2019-01-03 21:47:28 DEBUG wire-wire:78 - << "[EOL]"
+2019-01-03 21:47:28 DEBUG DefaultClientConnection-receiveResponseHeader:229 - Receiving response: HTTP/1.1 200 OK
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:232 - << HTTP/1.1 200 OK
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:235 - << Content-Type: application/json; charset=UTF-8
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:235 - << Date: Thu, 03 Jan 2019 16:17:28 GMT
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:235 - << Expires: Thu, 03 Jan 2019 16:17:28 GMT
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:235 - << Cache-Control: private, max-age=0
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:235 - << X-Content-Type-Options: nosniff
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:235 - << X-Frame-Options: SAMEORIGIN
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:235 - << X-XSS-Protection: 1; mode=block
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:235 - << Server: GSE
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:235 - << Alt-Svc: quic=":443"; ma=2592000; v="44,43,39,35"
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:235 - << Accept-Ranges: none
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:235 - << Vary: Accept-Encoding
+2019-01-03 21:47:28 DEBUG headers-receiveResponseHeader:235 - << Transfer-Encoding: chunked
+2019-01-03 21:47:28 DEBUG DefaultHttpClient-execute:540 - Connection can be kept alive indefinitely
+2019-01-03 21:47:28 DEBUG Messaging-sendCommonMessage:187 - Response : HTTP/1.1 200 OK
+2019-01-03 21:47:28 DEBUG Messaging-sendCommonMessage:188 - Message : {"to":"f_JRfXJMD6w:APA91bHBCsNjcVTP8AMEO7xj1ejm-ai78lOHRAEsgJrYc7npWVq9GuHv-fu3iGQd5AJ4q2zBakSiX43HD1wuhsnLHEZByP5SYJ1nHz2c2uHCm3nlU6UORAT8MyVFAzngC4zvhYJP8rlm","priority":"high","data":{"page":"comment","id":"idVal"},"notification":{"title":"title app","body":"body app"}}

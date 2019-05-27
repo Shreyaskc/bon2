@@ -1,0 +1,7 @@
+<Context>
+			<Resource auth="Container" driverClassName="com.mysql.cj.jdbc.Driver"
+			global="jdbc/bon" maxActive="100" maxIdle="20" maxWait="10000"
+			minIdle="5" name="jdbc/bon" password="mister002" type="javax.sql.DataSource"
+			url="jdbc:mysql://bon2dbdevtest.chwdders6ach.us-west-2.rds.amazonaws.com:3306/bon2dev?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC" username="dbadmin" />
+			
+</Context>
