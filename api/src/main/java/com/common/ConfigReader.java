@@ -99,6 +99,8 @@ public class ConfigReader {
 	    appConfig.put(Constants.APPROVE_STATION_PARTNER, prop);
 	    prop = props.getProperty(Constants.BANTU_MAIL);
 	    appConfig.put(Constants.BANTU_MAIL, prop);
+	    prop = props.getProperty(Constants.ADMIN_SUBSTRING);
+	    appConfig.put(Constants.ADMIN_SUBSTRING, prop);
 
 	    return configReaderObject;
 	}

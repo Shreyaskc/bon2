@@ -92,4 +92,18 @@ public class CommonUtils {
 	}
 	return false;
     }
+
+    public static boolean isUserAdmin(String email) throws Exception {
+	ConfigReader config = ConfigReader.getObject();
+	String adminSubstring = config.getAppConfig(Constants.ADMIN_SUBSTRING);
+	if (!StringUtils.isEmpty(email) && email.contains(adminSubstring)) {
+	    return true;
+	}
+	return false;
+    }
+
+    public static void main(String args[]) throws Exception {
+	String email = "shreyas@bon2.com";
+	System.out.println(isUserAdmin(email) + "");
+    }
 }

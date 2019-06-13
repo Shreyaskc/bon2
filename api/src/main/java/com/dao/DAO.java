@@ -45,6 +45,7 @@ import com.dto.ScheduledDTO;
 import com.dto.SearchArtistDTO;
 import com.dto.SearchMediaRequest;
 import com.dto.SearchPaginatedRequest;
+import com.dto.SeriesPaginatedRequest;
 import com.dto.ShopifyProductDTO;
 import com.dto.StationItemPaginatedRequest;
 import com.dto.StationMasterDTO;
@@ -2686,6 +2687,9 @@ public class DAO {
 	Database db = new Database();
 	try {
 	    String query = SQLConstants.GET_FOLLOWING_FEED.toLowerCase();
+	    if (!requestDTO.isAdmin) {
+		query += SQLConstants.MEDIA_FLAG;
+	    }
 	    query += " order by m.created_date desc limit " + (requestDTO.startRange - 1) + ","
 		    + (requestDTO.endRange - requestDTO.startRange + 1);
 	    LOG.debug("query>>>>" + query);
@@ -2775,6 +2779,9 @@ public class DAO {
 		userTypeFlag = true;
 	    }
 	    query += SQLConstants.GET_PUBLIC_FEED_POSTFIX.toLowerCase();
+	    if (!requestDTO.isAdmin) {
+		query += SQLConstants.MEDIA_FLAG;
+	    }
 	    query += " limit " + (requestDTO.startRange - 1) + "," + (requestDTO.endRange - requestDTO.startRange + 1);
 	    LOG.debug("query>>>>" + query);
 	    LinkedList<Object> paramList = new LinkedList<Object>();
@@ -3065,6 +3072,8 @@ public class DAO {
 	    params.add(dto.scheduledStartTime);
 	    params.add(dto.scheduledEndTime);
 	    params.add(dto.isScheduled);
+	    params.add(dto.seriesId);
+	    params.add(dto.episodeNumber);
 
 	    int count = db.executeUpdate(query, params);
 	    if (count <= 0) {
@@ -5194,7 +5203,9 @@ public class DAO {
 	    if (dto.isFeatured != null && dto.isFeatured.length() > 0) {
 		query += SQLConstants.SEARCH_MEDIA_FEATURED + " '" + dto.isFeatured + "' ";
 	    }
-
+	    if (!dto.isAdmin) {
+		query += SQLConstants.MEDIA_FLAG;
+	    }
 	    LinkedList<Object> paramList = new LinkedList<Object>();
 	    paramList.add(dto.userId);
 	    paramList.add(searchString);
@@ -5366,6 +5377,83 @@ public class DAO {
 	}
 	return null;
     }
+    
+    
+    public String createSeries(SeriesPaginatedRequest dto) throws Exception {
+    	Database db = new Database();
+    	try {
+    	    String query = SQLConstants.INSERT_SERIES.toLowerCase();
+    	    String seriesId = DAOHelper.guidGenerator(Constants.SERIES, "");
+
+    	    LinkedList<Object> params = new LinkedList<>();
+    	    params.add(seriesId);
+    	    params.add(dto.title);
+    	    params.add(dto.description);
+    	    params.add(dto.thumbnail);
+    	    params.add(dto.director);
+    	    params.add(dto.producer);
+    	    params.add(dto.cast);
+
+    	    int count = db.executeUpdate(query, params);
+    	    if (count > 0) {
+    		return seriesId;
+    	    }
+
+    	} catch (Exception e) {
+    	    try {
+    		LOG.error(e.getMessage());
+    		LOG.error("The transaction was rollback");
+    		throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),
+    			ErrorCodes.StatusCodes.FAILURE, null);
+    	    } catch (Exception e1) {
+    		LOG.error("There was an error making a rollback");
+    		throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),
+    			ErrorCodes.StatusCodes.FAILURE, null);
+    	    }
+    	} finally {
+    	    closeDbConnection(db);
+    	}
+    	return null;
+        }
+    
+    public LinkedList<SeriesPaginatedRequest> getSeries(SeriesPaginatedRequest dto) throws Exception {
+    	Database db = new Database();
+    	try {
+    	    String query = SQLConstants.GET_SERIES.toLowerCase();
+    	    query += " order by created_date desc limit " + (dto.startRange - 1) + ","
+    		    + (dto.endRange - dto.startRange + 1);
+    	    LOG.debug("query>>>>" + query);
+    	    LinkedList<Object> paramList = new LinkedList<Object>();
+    	    paramList.add(dto.userId);
+    	    db.executeQuery(query, paramList);
+    	    LinkedList<SeriesPaginatedRequest> responseList = seriesResponseProduce(db);
+    	    return responseList;
+    	} catch (Exception e) {
+    	    LOG.error("There was an error in DB query " + e.getMessage());
+    	    throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),
+    		    ErrorCodes.StatusCodes.FAILURE, null);
+    	} finally {
+    	    closeDbConnection(db);
+    	}
+
+        }
+    
+    private LinkedList<SeriesPaginatedRequest> seriesResponseProduce(Database db) throws Exception {
+    	LinkedList<SeriesPaginatedRequest> responseList = new LinkedList<SeriesPaginatedRequest>();
+    	while (db.cRowSet.next()) {
+    		SeriesPaginatedRequest series = new SeriesPaginatedRequest();
+    	    series.seriesId = db.cRowSet.getString("series_id");
+    	    series.title = db.cRowSet.getString("title");
+    	    series.description = db.cRowSet.getString("description");
+    	    series.thumbnail = db.cRowSet.getString("thumbnail");
+    	    series.director = db.cRowSet.getString("director");
+    	    series.producer = db.cRowSet.getString("producer");
+    	    series.cast = db.cRowSet.getString("cast");
+    	    responseList.add(series);
+    	}
+    	return responseList;
+        }
+
 
     public LinkedList<ScheduledDTO> getUserScheduledContent(PaginatedRequest dto) throws Exception {
 	Database db = new Database();
@@ -5422,6 +5510,9 @@ public class DAO {
 	Database db = new Database();
 	try {
 	    String query = SQLConstants.SEARCH_MEDIA.toLowerCase();
+	    if (!dto.isAdmin) {
+		query += SQLConstants.MEDIA_FLAG;
+	    }
 	    query += " order by m.created_date desc limit " + (dto.startRange - 1) + ","
 		    + (dto.endRange - dto.startRange + 1);
 	    LOG.debug("query>>>>" + query);
@@ -5561,6 +5652,7 @@ public class DAO {
 	    params.add(dto.youtubeUrl);
 	    params.add(dto.bon2Url);
 	    params.add(dto.userId);
+	    params.add(dto.generalCategory);
 
 	    int count = db.executeUpdate(query, params);
 	    if (count <= 0) {
@@ -5709,6 +5801,7 @@ public class DAO {
 	    params.add(dto.pintrestUrl);
 	    params.add(dto.youtubeUrl);
 	    params.add(dto.bon2Url);
+	    params.add(dto.generalCategory);
 	    params.add(dto.artistId);
 	    int count = db.executeUpdate(query, params);
 	    if (count <= 0) {
@@ -5880,6 +5973,8 @@ public class DAO {
 	artistDTO.bon2Url = db.cRowSet.getString("BON2_URL");
 	artistDTO.uploader = db.cRowSet.getString("uploader");
 	artistDTO.artistUserId = db.cRowSet.getString("artist_user_id");
+	artistDTO.generalCategory = db.cRowSet.getString("general_category");
+
 	return artistDTO;
     }
 

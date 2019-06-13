@@ -45,6 +45,7 @@ import com.dto.ScheduledDTO;
 import com.dto.SearchArtistDTO;
 import com.dto.SearchMediaRequest;
 import com.dto.SearchPaginatedRequest;
+import com.dto.SeriesPaginatedRequest;
 import com.dto.ShopifyProductDTO;
 import com.dto.StationItemPaginatedRequest;
 import com.dto.StationMasterDTO;
@@ -174,31 +175,38 @@ public class BusinessLayer {
 
 	    if (flag) {
 		MediaTargetUserDTO user = B2Dao.getUser(regDto.userId);
-		if (user.sendFollowNotification) {
-		    String name = CommonUtils.getName(user.mFirstName, user.mLastName, user.mUserId);
-		    MailDTO mailDTO = new MailDTO();
-		    LinkedList<String> followingUserIdList = regDto.followingUserIdList;
-		    for (String followingId : followingUserIdList) {
-			MediaTargetUserDTO targetUser = B2Dao.getUser(followingId);
-			String title = name + Constants.FOLLOWED_YOU;
-			mailDTO.email = targetUser.mEmail;
-			mailDTO.subject = name + Constants.FOLLOWED_YOU;
-			mailDTO.urlPostfix = "";
-			mailDTO.activityTitle = title;
-			mailDTO.activityText = "";
-			SendMailSSL.sendMailFromTemplate(mailDTO);
-			Map<String, String> data = new HashMap<>();
-			data.put(Constants.PAGE, Constants.FOLLOW);
-			data.put(Constants.ID, regDto.userId);
-			Messaging messaging = new Messaging();
-			NotificationDTO notificationDTO = new NotificationDTO();
-			notificationDTO.title = Constants.NEW_FOLLOWER;
-			notificationDTO.body = mailDTO.subject;
-			notificationDTO.data = data;
-			notificationDTO.token = targetUser.notificationToken;
-			messaging.sendCommonMessage(notificationDTO);
+		String name = CommonUtils.getName(user.mFirstName, user.mLastName, user.mUserId);
+		MailDTO mailDTO = new MailDTO();
+		LinkedList<String> followingUserIdList = regDto.followingUserIdList;
+		for (String followingId : followingUserIdList) {
+		    MediaTargetUserDTO targetUser = B2Dao.getUser(followingId);
+		    String title = name + Constants.FOLLOWED_YOU;
+		    mailDTO.email = targetUser.mEmail;
+		    mailDTO.subject = name + Constants.FOLLOWED_YOU;
+		    mailDTO.urlPostfix = "";
+		    mailDTO.activityTitle = title;
+		    mailDTO.activityText = "";
+		    if (user.sendFollowNotification) {
+
+			try {
+			    SendMailSSL.sendMailFromTemplate(mailDTO);
+			} catch (Exception e) {
+			    // TODO Auto-generated catch block
+			    e.printStackTrace();
+			}
 		    }
+		    Map<String, String> data = new HashMap<>();
+		    data.put(Constants.PAGE, Constants.FOLLOW);
+		    data.put(Constants.ID, regDto.userId);
+		    Messaging messaging = new Messaging();
+		    NotificationDTO notificationDTO = new NotificationDTO();
+		    notificationDTO.title = Constants.NEW_FOLLOWER;
+		    notificationDTO.body = mailDTO.subject;
+		    notificationDTO.data = data;
+		    notificationDTO.token = targetUser.notificationToken;
+		    messaging.sendCommonMessage(notificationDTO);
 		}
+
 	    }
 	} catch (Exception e) {
 	    // TODO: handle exception
@@ -252,6 +260,15 @@ public class BusinessLayer {
 
     public boolean validateUser(String userId, String accessToken) throws Exception {
 	return B2Dao.validateUser(userId, accessToken);
+    }
+
+    public RegisterUserDTO validateReturnUser(String userId, String accessToken) throws Exception {
+	RegisterUserDTO userDTO = B2Dao.getUserDetailsWithToken(userId, accessToken);
+	if (userDTO == null || StringUtils.isEmpty(userDTO.userId)) {
+	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
+		    ErrorCodes.StatusCodes.FAILURE, null);
+	}
+	return userDTO;
     }
 
     public RegisterUserDTO getUserDetailsWithToken(String userId, String accessToken) throws Exception {
@@ -362,34 +379,39 @@ public class BusinessLayer {
 	try {
 	    if (flag) {
 
-		if (target.sendCommentNotification) {
-		    MailDTO mailDTO = new MailDTO();
-		    String name = CommonUtils.getName(target.cFirstName, target.cLastName, dto.userId);
-		    if (!dto.userId.equalsIgnoreCase(target.mUserId)) {
-			if (!StringUtils.isEmpty(target.fileType)) {
-			    target.fileType = target.fileType.replaceAll("-post", "");
-			}
-			String title = name + Constants.COMMENTED_ON + target.fileType;
-			mailDTO.email = target.mEmail;
-			mailDTO.subject = name + " Commented on your " + Constants.POST;
-			mailDTO.activityTitle = title;
-			mailDTO.urlPostfix = "?post=" + dto.mediaId;
-			mailDTO.activityText = title + " : <b>" + target.title + "</b>";
-			SendMailSSL.sendMailFromTemplate(mailDTO);
-			Map<String, String> data = new HashMap<>();
-			data.put(Constants.PAGE, Constants.COMMENT);
-			data.put(Constants.ID, dto.mediaId);
-			Messaging messaging = new Messaging();
-
-			byte[] base64decodedBytes = Base64.getDecoder().decode(dto.comment);
-			NotificationDTO notificationDTO = new NotificationDTO();
-			notificationDTO.title = title;
-			notificationDTO.body = new String(base64decodedBytes, "utf-8");
-			notificationDTO.data = data;
-			notificationDTO.token = target.notificationToken;
-			messaging.sendCommonMessage(notificationDTO);
+		MailDTO mailDTO = new MailDTO();
+		String name = CommonUtils.getName(target.cFirstName, target.cLastName, dto.userId);
+		if (!dto.userId.equalsIgnoreCase(target.mUserId)) {
+		    if (!StringUtils.isEmpty(target.fileType)) {
+			target.fileType = target.fileType.replaceAll("-post", "");
 		    }
+		    String title = name + Constants.COMMENTED_ON + target.fileType;
+		    mailDTO.email = target.mEmail;
+		    mailDTO.subject = name + " Commented on your " + Constants.POST;
+		    mailDTO.activityTitle = title;
+		    mailDTO.urlPostfix = "?post=" + dto.mediaId;
+		    mailDTO.activityText = title + " : <b>" + target.title + "</b>";
+		    if (target.sendCommentNotification) {
+			try {
+			    SendMailSSL.sendMailFromTemplate(mailDTO);
+			} catch (Exception e) {
+			    // TODO: handle exception
+			}
+		    }
+		    Map<String, String> data = new HashMap<>();
+		    data.put(Constants.PAGE, Constants.COMMENT);
+		    data.put(Constants.ID, dto.mediaId);
+		    Messaging messaging = new Messaging();
+
+		    byte[] base64decodedBytes = Base64.getDecoder().decode(dto.comment);
+		    NotificationDTO notificationDTO = new NotificationDTO();
+		    notificationDTO.title = title;
+		    notificationDTO.body = new String(base64decodedBytes, "utf-8");
+		    notificationDTO.data = data;
+		    notificationDTO.token = target.notificationToken;
+		    messaging.sendCommonMessage(notificationDTO);
 		}
+
 	    }
 	} catch (Exception e) {
 	    // TODO: handle exception
@@ -471,29 +493,35 @@ public class BusinessLayer {
 	}
 	try {
 	    MediaTargetUserDTO target = B2Dao.getTargetUser(dto.userId, dto.toUserId);
+	    MailDTO mailDTO = new MailDTO();
+	    String name = CommonUtils.getName(target.mFirstName, target.mLastName, dto.userId);
+	    String title = name + Constants.MESSAGED + " : ";
+	    mailDTO.email = target.mEmail;
+	    mailDTO.subject = title;
+	    mailDTO.activityTitle = title;
+	    mailDTO.activityText = dto.message;
+	    mailDTO.urlPostfix = "profile.php?m=" + dto.messageId + "&tab=MQ==";
 	    if (target.sendMessageNotification) {
-		MailDTO mailDTO = new MailDTO();
-		String name = CommonUtils.getName(target.mFirstName, target.mLastName, dto.userId);
-		String title = name + Constants.MESSAGED + " : ";
-		mailDTO.email = target.mEmail;
-		mailDTO.subject = title;
-		mailDTO.activityTitle = title;
-		mailDTO.activityText = dto.message;
-		mailDTO.urlPostfix = "profile.php?m=" + dto.messageId + "&tab=MQ==";
-		SendMailSSL.sendMailFromTemplate(mailDTO);
-		Map<String, String> data = new HashMap<>();
-		data.put(Constants.PAGE, Constants.MESSAGE);
-		data.put(Constants.ID, dto.messageId);
 
-		Messaging messaging = new Messaging();
-		NotificationDTO notificationDTO = new NotificationDTO();
-		notificationDTO.title = name + Constants.MESSAGED;
-		notificationDTO.body = dto.message;
-		notificationDTO.data = data;
-		notificationDTO.token = target.notificationToken;
-		messaging.sendCommonMessage(notificationDTO);
-		return true;
+		try {
+		    SendMailSSL.sendMailFromTemplate(mailDTO);
+		} catch (Exception e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
 	    }
+	    Map<String, String> data = new HashMap<>();
+	    data.put(Constants.PAGE, Constants.MESSAGE);
+	    data.put(Constants.ID, dto.messageId);
+
+	    Messaging messaging = new Messaging();
+	    NotificationDTO notificationDTO = new NotificationDTO();
+	    notificationDTO.title = name + Constants.MESSAGED;
+	    notificationDTO.body = dto.message;
+	    notificationDTO.data = data;
+	    notificationDTO.token = target.notificationToken;
+	    messaging.sendCommonMessage(notificationDTO);
+	    return true;
 
 	} catch (Exception e) {
 	    // TODO: handle exception
@@ -533,33 +561,40 @@ public class BusinessLayer {
 	try {
 	    if (flag) {
 		MediaTargetUserDTO target = B2Dao.getMediaTargetUser(dto.userId, dto.mediaId);
-		if (target.sendLikeNotification) {
-		    MailDTO mailDTO = new MailDTO();
 
-		    String name = CommonUtils.getName(target.cFirstName, target.cLastName, dto.userId);
-		    if (!dto.userId.equalsIgnoreCase(target.mUserId)) {
-			if (!StringUtils.isEmpty(target.fileType)) {
-			    target.fileType = target.fileType.replaceAll("-post", "");
-			}
-			String title = name + Constants.LIKED_YOUR + target.fileType;
-			mailDTO.email = target.mEmail;
-			mailDTO.subject = name + Constants.LIKED_YOUR + Constants.POST;
-			mailDTO.activityTitle = title;
-			mailDTO.urlPostfix = "?post=" + dto.mediaId;
-			mailDTO.activityText = "";
-			SendMailSSL.sendMailFromTemplate(mailDTO);
-			Map<String, String> data = new HashMap<>();
-			data.put(Constants.PAGE, Constants.LIKE);
-			data.put(Constants.ID, dto.mediaId);
-			Messaging messaging = new Messaging();
-			NotificationDTO notificationDTO = new NotificationDTO();
-			notificationDTO.title = title;
-			notificationDTO.body = target.title;
-			notificationDTO.data = data;
-			notificationDTO.token = target.notificationToken;
-			messaging.sendCommonMessage(notificationDTO);
+		MailDTO mailDTO = new MailDTO();
+
+		String name = CommonUtils.getName(target.cFirstName, target.cLastName, dto.userId);
+		if (!dto.userId.equalsIgnoreCase(target.mUserId)) {
+		    if (!StringUtils.isEmpty(target.fileType)) {
+			target.fileType = target.fileType.replaceAll("-post", "");
 		    }
+		    String title = name + Constants.LIKED_YOUR + target.fileType;
+		    mailDTO.email = target.mEmail;
+		    mailDTO.subject = name + Constants.LIKED_YOUR + Constants.POST;
+		    mailDTO.activityTitle = title;
+		    mailDTO.urlPostfix = "?post=" + dto.mediaId;
+		    mailDTO.activityText = "";
+		    if (target.sendLikeNotification) {
+			try {
+			    SendMailSSL.sendMailFromTemplate(mailDTO);
+			} catch (Exception e) {
+			    // TODO Auto-generated catch block
+			    e.printStackTrace();
+			}
+		    }
+		    Map<String, String> data = new HashMap<>();
+		    data.put(Constants.PAGE, Constants.LIKE);
+		    data.put(Constants.ID, dto.mediaId);
+		    Messaging messaging = new Messaging();
+		    NotificationDTO notificationDTO = new NotificationDTO();
+		    notificationDTO.title = title;
+		    notificationDTO.body = target.title;
+		    notificationDTO.data = data;
+		    notificationDTO.token = target.notificationToken;
+		    messaging.sendCommonMessage(notificationDTO);
 		}
+
 	    }
 	} catch (Exception e) {
 	    // TODO: handle exception
@@ -580,10 +615,8 @@ public class BusinessLayer {
     }
 
     public LinkedList<FeedResponseDTO> getUserFollowingFeedList(PaginatedRequest requestDTO) throws Exception {
-	if (!validateUser(requestDTO.userId, requestDTO.accessToken)) {
-	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
-		    ErrorCodes.StatusCodes.FAILURE, null);
-	}
+	RegisterUserDTO userDTO = validateReturnUser(requestDTO.userId, requestDTO.accessToken);
+	requestDTO.isAdmin = CommonUtils.isUserAdmin(userDTO.email);
 	String targetUserId = requestDTO.targetUserId;
 	if (StringUtils.isEmpty(targetUserId)) {
 	    targetUserId = requestDTO.userId;
@@ -614,7 +647,12 @@ public class BusinessLayer {
      * @throws Exception
      */
     public LinkedList<FeedResponseDTO> getPublicFeed(UserMediaPaginatedRequest requestDTO) throws Exception {
-
+	try {
+	    RegisterUserDTO userDTO = validateReturnUser(requestDTO.userId, requestDTO.accessToken);
+	    requestDTO.isAdmin = CommonUtils.isUserAdmin(userDTO.email);
+	} catch (Exception e) {
+	    // TODO: handle exception
+	}
 	return B2Dao.getPublicFeed(requestDTO);
     }
 
@@ -1457,10 +1495,8 @@ public class BusinessLayer {
     }
 
     public LinkedList<FeedResponseDTO> searchMedia(SearchPaginatedRequest dto) throws Exception {
-	if (!validateUser(dto.userId, dto.accessToken)) {
-	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
-		    ErrorCodes.StatusCodes.FAILURE, null);
-	}
+	RegisterUserDTO userDTO = validateReturnUser(dto.userId, dto.accessToken);
+	dto.isAdmin = CommonUtils.isUserAdmin(userDTO.email);
 	if (dto.targetUserId == null || dto.targetUserId.length() <= 0) {
 	    dto.targetUserId = dto.userId;
 	}
@@ -1510,7 +1546,24 @@ public class BusinessLayer {
 	}
 	return B2Dao.addScheduledContent(dto);
     }
+    
+    
+    public String createSeries(SeriesPaginatedRequest dto)  throws Exception {
+    	if (!validateUser(dto.userId, dto.accessToken)) {
+    	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
+    		    ErrorCodes.StatusCodes.FAILURE, null);
+    	}
+    	return B2Dao.createSeries(dto);
+        }
+    public LinkedList<SeriesPaginatedRequest> getSeries(SeriesPaginatedRequest dto) throws Exception {
+    	B2Dao.validateStartEndRange(dto);
+    	if (!validateUser(dto.userId, dto.accessToken)) {
+    	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
+    		    ErrorCodes.StatusCodes.FAILURE, null);
+    	}
+    	return B2Dao.getSeries(dto);
 
+        }
     public boolean deleteScheduledContent(ScheduledDTO dto) throws Exception {
 	if (!validateUser(dto.userId, dto.accessToken)) {
 	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
@@ -1556,10 +1609,8 @@ public class BusinessLayer {
     }
 
     public LinkedList<FeedResponseDTO> getUserMedia(SearchPaginatedRequest dto) throws Exception {
-	if (!validateUser(dto.userId, dto.accessToken)) {
-	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
-		    ErrorCodes.StatusCodes.FAILURE, null);
-	}
+	RegisterUserDTO userDTO = validateReturnUser(dto.userId, dto.accessToken);
+	dto.isAdmin = CommonUtils.isUserAdmin(userDTO.email);
 	if (B2Dao.getUserBlockStatus(dto.userId, dto.targetUserId)) {
 	    throw new SystemException(ErrorCodes.USER_BLOCKED, ConfigReader.getObject().getErrorConfig(),
 		    ErrorCodes.StatusCodes.FAILURE, null);
