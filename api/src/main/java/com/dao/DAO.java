@@ -5424,7 +5424,7 @@ public class DAO {
     		    + (dto.endRange - dto.startRange + 1);
     	    LOG.debug("query>>>>" + query);
     	    LinkedList<Object> paramList = new LinkedList<Object>();
-    	    paramList.add(dto.userId);
+//    	    paramList.add(dto.userId);
     	    db.executeQuery(query, paramList);
     	    LinkedList<SeriesPaginatedRequest> responseList = seriesResponseProduce(db);
     	    return responseList;
