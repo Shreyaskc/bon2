@@ -65,7 +65,7 @@ import com.exception.SystemException;
 @Path("/")
 @Produces({ MediaType.APPLICATION_JSON })
 public class BaseService {
-    private BusinessLayer BL;
+    protected BusinessLayer BL;
     protected String resStr = null;
     protected Object obj = null;
     protected HashMap<String, String> errorMessages;
@@ -1125,7 +1125,7 @@ public class BaseService {
 	// LOG.info("Response String >>> "+resStr);
 	return resStr;
     }
-    
+
     @POST
     @Path("/createSeries")
     public String createSeries(MultivaluedMap<String, String> params) throws Exception {
@@ -1157,7 +1157,7 @@ public class BaseService {
 	// LOG.info("Response String >>> "+resStr);
 	return resStr;
     }
-    
+
     @POST
     @Path("/getSeries")
     public String getSeries(MultivaluedMap<String, String> params) throws Exception {
@@ -3594,6 +3594,38 @@ public class BaseService {
 	    initRoutine();
 	    DTO = (SearchPaginatedRequest) ServiceHelper.buildJsonString(reqStr, SearchPaginatedRequest.class);
 	    obj = BL.getPostsUserTaggedIn(DTO);
+	    responseDTO.setResponseObject(obj);
+	    responseDTO.setResponseStatus(true);
+	    resStr = ServiceHelper.buildJsonString(responseDTO);
+	} catch (SystemException e) {
+	    resStr = ServiceHelper.buildJsonString(ExceptionHandler.getServiceResponseErrorMessage(e, errorMessages));
+	    e.printStackTrace();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    SystemException ex = new SystemException(e, ErrorCodes.GENERIC_EXCEPTION,
+		    ConfigReader.getObject().getErrorConfig(), ErrorCodes.StatusCodes.FAILURE, null);
+	    resStr = ServiceHelper.buildJsonString(ExceptionHandler.getServiceResponseErrorMessage(ex, errorMessages));
+	    LOG.info(e.getMessage());
+	}
+
+	long end = System.currentTimeMillis();
+	LOG.info("Total time taken>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  " + (end - start));
+	// LOG.info("Response String >>> "+resStr);
+	return resStr;
+    }
+
+    @POST
+    @Path("/getSeriesMedia")
+    public String getSeriesMedia(MultivaluedMap<String, String> params) throws Exception {
+	long start = System.currentTimeMillis();
+	String reqStr = params.get("data").get(0);
+	LOG.info("Request String >>> " + reqStr);
+
+	SeriesPaginatedRequest DTO;
+	try {
+	    initRoutine();
+	    DTO = (SeriesPaginatedRequest) ServiceHelper.buildJsonString(reqStr, SeriesPaginatedRequest.class);
+	    obj = BL.getSeriesMedia(DTO);
 	    responseDTO.setResponseObject(obj);
 	    responseDTO.setResponseStatus(true);
 	    resStr = ServiceHelper.buildJsonString(responseDTO);

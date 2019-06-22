@@ -4596,6 +4596,12 @@ public class DAO {
 	media.postedAs = db.cRowSet.getString("posted_as");
 	media.postedId = db.cRowSet.getString("posted_id");
 	try {
+	    media.seriesId = db.cRowSet.getString("series_id");
+	    media.episodeNumber = db.cRowSet.getString("episode_number");
+	} catch (Exception e) {
+	    LOG.error("Error getting Series details : " + e.getMessage());
+	}
+	try {
 	    media.scheduledStartTime = db.cRowSet.getTimestamp("scheduled_Start_Time");
 	    media.scheduledEndTime = db.cRowSet.getTimestamp("scheduled_End_Time");
 	} catch (Exception e) {
@@ -4627,7 +4633,7 @@ public class DAO {
 	    }
 
 	} catch (Exception e) {
-	    LOG.error("Error converting the date.");
+	    LOG.error("Like Information is not present.");
 	}
 	try {
 	    media.mediaDate = db.cRowSet.getDate("MEDIA_DATE");
@@ -5261,6 +5267,28 @@ public class DAO {
 	}
     }
 
+    public LinkedList<FeedResponseDTO> getSeriesMedia(SeriesPaginatedRequest dto) throws Exception {
+	validateStartEndRange(dto);
+	Database db = new Database();
+	try {
+	    String query = SQLConstants.GET_MEDIA_IN_SERIES.toLowerCase();
+	    LinkedList<Object> paramList = new LinkedList<Object>();
+	    paramList.add(dto.seriesId);
+	    query += " order by m.created_date desc  limit " + (dto.startRange - 1) + ","
+		    + (dto.endRange - dto.startRange + 1);
+	    LOG.debug("query>>>>" + query);
+	    db.executeQuery(query, paramList);
+	    LinkedList<FeedResponseDTO> responseList = feedResponseProduce(db, dto.userId);
+	    return responseList;
+	} catch (Exception e) {
+	    LOG.error("There was an error in DB query " + e.getMessage());
+	    throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),
+		    ErrorCodes.StatusCodes.FAILURE, null);
+	} finally {
+	    closeDbConnection(db);
+	}
+    }
+
     public LinkedList<FeedResponseDTO> getScheduledContent(SearchPaginatedRequest dto) throws Exception {
 	if (!validateUser(dto.userId, dto.accessToken)) {
 	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
@@ -5377,83 +5405,81 @@ public class DAO {
 	}
 	return null;
     }
-    
-    
+
     public String createSeries(SeriesPaginatedRequest dto) throws Exception {
-    	Database db = new Database();
-    	try {
-    	    String query = SQLConstants.INSERT_SERIES.toLowerCase();
-    	    String seriesId = DAOHelper.guidGenerator(Constants.SERIES, "");
+	Database db = new Database();
+	try {
+	    String query = SQLConstants.INSERT_SERIES.toLowerCase();
+	    String seriesId = DAOHelper.guidGenerator(Constants.SERIES, "");
 
-    	    LinkedList<Object> params = new LinkedList<>();
-    	    params.add(seriesId);
-    	    params.add(dto.title);
-    	    params.add(dto.description);
-    	    params.add(dto.thumbnail);
-    	    params.add(dto.director);
-    	    params.add(dto.producer);
-    	    params.add(dto.cast);
+	    LinkedList<Object> params = new LinkedList<>();
+	    params.add(seriesId);
+	    params.add(dto.title);
+	    params.add(dto.description);
+	    params.add(dto.thumbnail);
+	    params.add(dto.director);
+	    params.add(dto.producer);
+	    params.add(dto.cast);
 
-    	    int count = db.executeUpdate(query, params);
-    	    if (count > 0) {
-    		return seriesId;
-    	    }
+	    int count = db.executeUpdate(query, params);
+	    if (count > 0) {
+		return seriesId;
+	    }
 
-    	} catch (Exception e) {
-    	    try {
-    		LOG.error(e.getMessage());
-    		LOG.error("The transaction was rollback");
-    		throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),
-    			ErrorCodes.StatusCodes.FAILURE, null);
-    	    } catch (Exception e1) {
-    		LOG.error("There was an error making a rollback");
-    		throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),
-    			ErrorCodes.StatusCodes.FAILURE, null);
-    	    }
-    	} finally {
-    	    closeDbConnection(db);
-    	}
-    	return null;
-        }
-    
+	} catch (Exception e) {
+	    try {
+		LOG.error(e.getMessage());
+		LOG.error("The transaction was rollback");
+		throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),
+			ErrorCodes.StatusCodes.FAILURE, null);
+	    } catch (Exception e1) {
+		LOG.error("There was an error making a rollback");
+		throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),
+			ErrorCodes.StatusCodes.FAILURE, null);
+	    }
+	} finally {
+	    closeDbConnection(db);
+	}
+	return null;
+    }
+
     public LinkedList<SeriesPaginatedRequest> getSeries(SeriesPaginatedRequest dto) throws Exception {
-    	Database db = new Database();
-    	try {
-    	    String query = SQLConstants.GET_SERIES.toLowerCase();
-    	    query += " order by created_date desc limit " + (dto.startRange - 1) + ","
-    		    + (dto.endRange - dto.startRange + 1);
-    	    LOG.debug("query>>>>" + query);
-    	    LinkedList<Object> paramList = new LinkedList<Object>();
+	Database db = new Database();
+	try {
+	    String query = SQLConstants.GET_SERIES.toLowerCase();
+	    query += " order by created_date desc limit " + (dto.startRange - 1) + ","
+		    + (dto.endRange - dto.startRange + 1);
+	    LOG.debug("query>>>>" + query);
+	    LinkedList<Object> paramList = new LinkedList<Object>();
 //    	    paramList.add(dto.userId);
-    	    db.executeQuery(query, paramList);
-    	    LinkedList<SeriesPaginatedRequest> responseList = seriesResponseProduce(db);
-    	    return responseList;
-    	} catch (Exception e) {
-    	    LOG.error("There was an error in DB query " + e.getMessage());
-    	    throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),
-    		    ErrorCodes.StatusCodes.FAILURE, null);
-    	} finally {
-    	    closeDbConnection(db);
-    	}
+	    db.executeQuery(query, paramList);
+	    LinkedList<SeriesPaginatedRequest> responseList = seriesResponseProduce(db);
+	    return responseList;
+	} catch (Exception e) {
+	    LOG.error("There was an error in DB query " + e.getMessage());
+	    throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),
+		    ErrorCodes.StatusCodes.FAILURE, null);
+	} finally {
+	    closeDbConnection(db);
+	}
 
-        }
-    
+    }
+
     private LinkedList<SeriesPaginatedRequest> seriesResponseProduce(Database db) throws Exception {
-    	LinkedList<SeriesPaginatedRequest> responseList = new LinkedList<SeriesPaginatedRequest>();
-    	while (db.cRowSet.next()) {
-    		SeriesPaginatedRequest series = new SeriesPaginatedRequest();
-    	    series.seriesId = db.cRowSet.getString("series_id");
-    	    series.title = db.cRowSet.getString("title");
-    	    series.description = db.cRowSet.getString("description");
-    	    series.thumbnail = db.cRowSet.getString("thumbnail");
-    	    series.director = db.cRowSet.getString("director");
-    	    series.producer = db.cRowSet.getString("producer");
-    	    series.cast = db.cRowSet.getString("cast");
-    	    responseList.add(series);
-    	}
-    	return responseList;
-        }
-
+	LinkedList<SeriesPaginatedRequest> responseList = new LinkedList<SeriesPaginatedRequest>();
+	while (db.cRowSet.next()) {
+	    SeriesPaginatedRequest series = new SeriesPaginatedRequest();
+	    series.seriesId = db.cRowSet.getString("series_id");
+	    series.title = db.cRowSet.getString("title");
+	    series.description = db.cRowSet.getString("description");
+	    series.thumbnail = db.cRowSet.getString("thumbnail");
+	    series.director = db.cRowSet.getString("director");
+	    series.producer = db.cRowSet.getString("producer");
+	    series.cast = db.cRowSet.getString("cast");
+	    responseList.add(series);
+	}
+	return responseList;
+    }
 
     public LinkedList<ScheduledDTO> getUserScheduledContent(PaginatedRequest dto) throws Exception {
 	Database db = new Database();

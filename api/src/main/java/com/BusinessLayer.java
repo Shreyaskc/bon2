@@ -1514,6 +1514,14 @@ public class BusinessLayer {
 	return B2Dao.getPostsUserTaggedIn(dto);
     }
 
+    public LinkedList<FeedResponseDTO> getSeriesMedia(SeriesPaginatedRequest dto) throws Exception {
+	if (!validateUser(dto.userId, dto.accessToken)) {
+	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
+		    ErrorCodes.StatusCodes.FAILURE, null);
+	}
+	return B2Dao.getSeriesMedia(dto);
+    }
+
     public FeedResponseDTO getSpecificMedia(MediaPostDTO dto) throws Exception {
 	if (!validateUser(dto.userId, dto.accessToken)) {
 	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
@@ -1546,24 +1554,25 @@ public class BusinessLayer {
 	}
 	return B2Dao.addScheduledContent(dto);
     }
-    
-    
-    public String createSeries(SeriesPaginatedRequest dto)  throws Exception {
-    	if (!validateUser(dto.userId, dto.accessToken)) {
-    	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
-    		    ErrorCodes.StatusCodes.FAILURE, null);
-    	}
-    	return B2Dao.createSeries(dto);
-        }
-    public LinkedList<SeriesPaginatedRequest> getSeries(SeriesPaginatedRequest dto) throws Exception {
-    	B2Dao.validateStartEndRange(dto);
-    	if (!validateUser(dto.userId, dto.accessToken)) {
-    	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
-    		    ErrorCodes.StatusCodes.FAILURE, null);
-    	}
-    	return B2Dao.getSeries(dto);
 
-        }
+    public String createSeries(SeriesPaginatedRequest dto) throws Exception {
+	if (!validateUser(dto.userId, dto.accessToken)) {
+	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
+		    ErrorCodes.StatusCodes.FAILURE, null);
+	}
+	return B2Dao.createSeries(dto);
+    }
+
+    public LinkedList<SeriesPaginatedRequest> getSeries(SeriesPaginatedRequest dto) throws Exception {
+	B2Dao.validateStartEndRange(dto);
+	if (!validateUser(dto.userId, dto.accessToken)) {
+	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
+		    ErrorCodes.StatusCodes.FAILURE, null);
+	}
+	return B2Dao.getSeries(dto);
+
+    }
+
     public boolean deleteScheduledContent(ScheduledDTO dto) throws Exception {
 	if (!validateUser(dto.userId, dto.accessToken)) {
 	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),
