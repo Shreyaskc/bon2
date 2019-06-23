@@ -44,5 +44,7 @@ public class MediaDTO extends AuthDTO {
     public String flaggedBy;
     public String flaggedReason;
     public Timestamp createdDate;
+    public String seriesId;
+    public String episodeNumber;
 
 }

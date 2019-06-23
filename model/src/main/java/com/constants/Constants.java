@@ -19,6 +19,7 @@ public interface Constants {
     String ACTIVITY_PREFIX = "activity";
     String ARTIST_PREFIX = "artist";
     String COMMENT = "comment";
+    String SERIES = "series";
     String LIKE = "like";
     String MESSAGE = "message";
     String BUSINESS_PRODUCT = "business_product";
@@ -101,5 +102,6 @@ public interface Constants {
     String USER_ID_TAG = "user_id_tag";
     String ID = "id";
     String PAGE = "page";
+    String ADMIN_SUBSTRING = "ADMIN_SUBSTRING";
 
 }

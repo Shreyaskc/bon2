@@ -8,4 +8,6 @@ public class SeriesPaginatedRequest extends PaginatedRequest {
 	public String director;
 	public String producer;
 	public String cast;
+	public String isFeatured;
+	public String featuredImage;
 }

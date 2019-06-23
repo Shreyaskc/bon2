@@ -8,7 +8,7 @@ package com.constants;
  */
 public interface SQLConstants {
     public String GET_TEST_LIST = "SELECT abc FROM test where abc=?";
-    public String MEDIA_COLUMNS = "m.MEDIA_ID,m.FILE_NAME,m.FILE_TYPE,m.MUSIC_PREF_ID,m.UPLOADER,m.TAGS,m.PATH,m.IS_AD,m.SKIP_FLAG,m.LOCATION,m.PRIVILEGE,m.LATITUDE,m.LONGITUDE,m.ARTIST,m.THUMBNAIL,m.DESCRIPTION,m.ARTIST_ID,m.ALBUM_ID,m.MEDIA_LENGTH,m.RANK,m.TITLE,m.SONG_TITLE,m.EDL_FILE_PATH,m.IS_SKIT,m.MEDIA_DATE,m.STATION_LIST,m.IS_FEATURED,m.PROJECT_NAME,m.POST_TYPE,m.posted_as,m.posted_id,m.scheduled_Start_Time,m.scheduled_End_Time,m.is_Scheduled,m.FLAG,m.FLAGGED_BY,m.FLAGGED_REASON ";
+    public String MEDIA_COLUMNS = "m.MEDIA_ID,m.FILE_NAME,m.FILE_TYPE,m.MUSIC_PREF_ID,m.UPLOADER,m.TAGS,m.PATH,m.IS_AD,m.SKIP_FLAG,m.LOCATION,m.PRIVILEGE,m.LATITUDE,m.LONGITUDE,m.ARTIST,m.THUMBNAIL,m.DESCRIPTION,m.ARTIST_ID,m.ALBUM_ID,m.MEDIA_LENGTH,m.RANK,m.TITLE,m.SONG_TITLE,m.EDL_FILE_PATH,m.IS_SKIT,m.MEDIA_DATE,m.STATION_LIST,m.IS_FEATURED,m.PROJECT_NAME,m.POST_TYPE,m.posted_as,m.posted_id,m.scheduled_Start_Time,m.scheduled_End_Time,m.is_Scheduled,m.FLAG,m.FLAGGED_BY,m.FLAGGED_REASON,m.episode_number,m.series_id ";
     public String GET_MUSIC_PREF_LIST = "SELECT MUSIC_PREF_ID,MUSIC_PREF_NAME, CATEGORY FROM music_pref_master";
     public String INSERT_USER_MASTER = "INSERT INTO USER_MASTER(USER_ID,PASSWORD,ACCESS_TOKEN,LAST_LOGIN,ACCESS_TOKEN_REFRESH_TIME,FIRST_NAME,LAST_NAME,EMAIL,"
 	    + "PHONE,PROFILE_PICTURE,USER_TYPE,LOCATION,GOOGLE_ID,FB_ID,CATEGORY,BUSINESS_USER_ID,ARTIST_USER_ID, "
@@ -54,7 +54,8 @@ public interface SQLConstants {
 	    + "(select media_id,user_id from user_media where user_id in (select following_user_id from user_following where user_id = ?) "
 	    + "and ( privilege = '" + Constants.PUBLIC_VISIBILITY + "' OR privilege = '"
 	    + Constants.FOLLOWERS_VISIBILITY
-	    + "'))  a where m.media_id = a.media_id and m.flag!= 'Y' and lower(m.file_type)!= 'video' and u.user_id = a.user_id ";
+	    + "'))  a where m.media_id = a.media_id and lower(m.file_type)!= 'video' and u.user_id = a.user_id  ";
+    public String MEDIA_FLAG = " and m.flag!= 'Y' ";
 
     public String USER_FEED_PREFIX = "select distinct " + MEDIA_COLUMNS
 	    + ",u.*,lm.USER_ID as like_user_id from media_master m left join like_master lm on lm.MEDIA_ID = m.MEDIA_ID and lm.USER_ID = ?, user_master u , (select media_id,user_id from user_media where user_id =? and ( privilege = '"
@@ -65,13 +66,13 @@ public interface SQLConstants {
     public String GET_PUBLIC_FEED_PREFIX = "select distinct " + MEDIA_COLUMNS
 	    + ",u.*,lm.USER_ID as like_user_id from media_master m left join like_master lm on lm.MEDIA_ID = m.MEDIA_ID and lm.USER_ID = ?, user_master u , "
 	    + "(select media_id,user_id from user_media where ( privilege = '" + Constants.PUBLIC_VISIBILITY
-	    + "'))  a where m.media_id = a.media_id and m.flag!= 'Y' and m.UPLOADER = u.USER_ID ";
+	    + "'))  a where m.media_id = a.media_id  and m.UPLOADER = u.USER_ID ";
     public String GET_PUBLIC_FEED_FOR_BUSINESS = " and u.user_type = ? ";
 
     public String GET_PUBLIC_FEED_POSTFIX = " order by m.created_date desc ";
     public String GET_PLAYLIST_FOR_USER = "select * from playlist_master where user_id =? ";
     public String GET_PLAYLIST_FOR_USER_FOLLOWING = "SELECT * FROM playlist_master WHERE user_id IN  (SELECT user_id FROM user_following WHERE following_user_id = ? ) AND privilege != ? ";
-    public String INSERT_MEDIA = "INSERT INTO MEDIA_MASTER(MEDIA_ID,FILE_NAME,FILE_TYPE,MUSIC_PREF_ID,UPLOADER,TAGS,PATH,IS_AD,SKIP_FLAG,LOCATION,PRIVILEGE,LATITUDE,LONGITUDE,ARTIST,THUMBNAIL,DESCRIPTION,ARTIST_ID,ALBUM_ID,MEDIA_LENGTH,RANK,TITLE,SONG_TITLE,EDL_FILE_PATH,METADATA_FILE_PATH,IS_SKIT,MEDIA_DATE,STATION_LIST,IS_FEATURED,PROJECT_NAME,POST_TYPE,posted_as,posted_id,scheduled_Start_Time,scheduled_End_Time,is_Scheduled) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),?,?,?,?,?,?,?,?,?)";
+    public String INSERT_MEDIA = "INSERT INTO MEDIA_MASTER(MEDIA_ID,FILE_NAME,FILE_TYPE,MUSIC_PREF_ID,UPLOADER,TAGS,PATH,IS_AD,SKIP_FLAG,LOCATION,PRIVILEGE,LATITUDE,LONGITUDE,ARTIST,THUMBNAIL,DESCRIPTION,ARTIST_ID,ALBUM_ID,MEDIA_LENGTH,RANK,TITLE,SONG_TITLE,EDL_FILE_PATH,METADATA_FILE_PATH,IS_SKIT,MEDIA_DATE,STATION_LIST,IS_FEATURED,PROJECT_NAME,POST_TYPE,posted_as,posted_id,scheduled_Start_Time,scheduled_End_Time,is_Scheduled,series_id,episode_number) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),?,?,?,?,?,?,?,?,?,?,?)";
     public String INSERT_USER_MEDIA = "INSERT INTO USER_MEDIA(USER_ID,MEDIA_ID,MEDIA_DATE,PRIVILEGE,ACTIVITY_ID) VALUES (?,?,NOW(),?,?)";
     public String INSERT_USER_MEDIA_ACTIVITY = "INSERT INTO ACTIVITY_MASTER(ACTIVITY_ID,ACTIVITY_NAME,ACTIVITY_DESCRIPTION,CREATED_DATE,USER_ID,ACTIVITY_TYPE,MEDIA_ID) VALUES (?,?,?,NOW(),?,?,?)";
     public String GET_TRENDING_MEDIA_FEED = "select distinct " + MEDIA_COLUMNS
@@ -170,7 +171,7 @@ public interface SQLConstants {
     // #blockImplemented
     public String SEARCH_MEDIA = "SELECT distinct " + MEDIA_COLUMNS
 	    + ",u.*,lm.USER_ID as like_user_id FROM media_master m left join like_master lm on lm.MEDIA_ID = m.MEDIA_ID and  m.flag!= 'Y' and lm.USER_ID = ?,user_master u "
-	    + "where UPLOADER = u.USER_ID and UPLOADER = ? and m.flag!= 'Y' ";
+	    + "where UPLOADER = u.USER_ID and UPLOADER = ?  ";
     public String SEARCH_USER_MEDIA = "select distinct " + MEDIA_COLUMNS
 	    + ",u.*,lm.USER_ID as like_user_id from media_master m left join like_master lm on lm.MEDIA_ID = m.MEDIA_ID and m.flag!= 'Y' and lm.USER_ID = ?, user_master u "
 	    + "where (concat_ws(' ' , song_title, file_name,STATION_LIST,tags,description,title) REGEXP ? or"
@@ -178,7 +179,7 @@ public interface SQLConstants {
 	    + "or album_id in ( select album_id from album_master where concat_ws(' ' , album_NAME,DESCRIPTION,STUDIO ) REGEXP ? "
 	    + "or artist_id in ( select artist_id from artist_master where    concat_ws(' ' , ARTIST_NAME, ARTIST_DESCRIPTION,TAGS,NATIONALITY,GENERE) REGEXP ?"
 	    + " ) ) ) and (m.uploader = u.user_id) AND (m.uploader not in (select user_id from user_blocked where blocked_user_id =? )) "
-	    + "AND (m.uploader not in (select blocked_user_id from user_blocked where user_id =? )) and m.FLAG!='Y' and u.IS_ACTIVE!='N' and lower(u.privacy_setting)!='private' ";
+	    + "AND (m.uploader not in (select blocked_user_id from user_blocked where user_id =? ))  and u.IS_ACTIVE!='N' and lower(u.privacy_setting)!='private' ";
     String SEARCH_MEDIA_FEATURED = " and IS_FEATURED =  ";
 
     String POST_TYPE_FILTER = " and FILE_TYPE = ?  ";
@@ -214,7 +215,11 @@ public interface SQLConstants {
     public String SCHEDULED_MEDIA_EXISTS = "select schedule_id from schedule_master where user_id = ? and media_id =?";
     public String INSERT_SCHEDULED_MEDIA = " insert into schedule_master (schedule_id,user_id,media_id,schedule_time,created_by) values (?,?,?,(select scheduled_End_Time from media_master where media_id =?) , ?)";
     public String GET_USER_SCHEDULED_MEDIA = "select * from schedule_master where user_id = ? ";
+
+    public String GET_SERIES = "select * from series_master ";
     public String DELETE_SCHEDULED_MEDIA = "DELETE FROM schedule_master WHERE schedule_id=? ";
+    public String INSERT_SERIES = " insert into series_master (series_id, title, description, thumbnail, director, producer, cast,is_featured,featured_image) values (?,?,?,?,?,?,?,?,?)";
+
     // #blockImplemented
     public String GET_MEDIA_COMMENT_COUNT = "select count(1) comment_count  from media_comments where media_id = ?  group by  media_id ";
     public String GET_MEDIA_LOOP_COUNT = "select count(1) loop_count  from media_loop where media_id = ?  group by  media_id ";
@@ -229,10 +234,10 @@ public interface SQLConstants {
     public String GET_BLOCKED_USER = "select blocked_user_id from user_blocked where user_id = ? and blocked_user_id= ? ";
     public String BLOCK_USER = "INSERT INTO user_blocked(user_id,blocked_user_id) VALUES (?,?)";
     public String UN_BLOCK_USER = "delete from user_blocked where user_id = ? and blocked_user_id= ? ";
-    public String CREATE_ARTIST = "INSERT INTO ARTIST_MASTER(`ARTIST_ID`, `ARTIST_NAME`, `ARTIST_DESCRIPTION`, `BIRTHDAY`, `TAGS`, `NATIONALITY`, `AGE`, `GENERE`, `FIRST_NAME`, `LAST_NAME`,`NICK_NAME`, `PROFILE_PICTURE`, `FB_URL`, `INSTAGRAM_URL`, `PINTREST_URL`, `YOUTUBE_URL`, `BON2_URL`,UPLOADER) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    public String CREATE_ARTIST = "INSERT INTO ARTIST_MASTER(`ARTIST_ID`, `ARTIST_NAME`, `ARTIST_DESCRIPTION`, `BIRTHDAY`, `TAGS`, `NATIONALITY`, `AGE`, `GENERE`, `FIRST_NAME`, `LAST_NAME`,`NICK_NAME`, `PROFILE_PICTURE`, `FB_URL`, `INSTAGRAM_URL`, `PINTREST_URL`, `YOUTUBE_URL`, `BON2_URL`,UPLOADER,`GENERAL_CATEGORY`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     public String SEARCH_ARTIST = "SELECT * FROM artist_master  where concat_ws(' ', `ARTIST_NAME`, `TAGS`, `NATIONALITY`,  `GENERE`,`FIRST_NAME`, `LAST_NAME`,`NICK_NAME`) REGEXP ? ";
     public String SEARCH_ARTIST_MEDIA = "SELECT * FROM artist_master  where ARTIST_ID in (select ARTIST_ID from artist_media where  concat_ws(' ', `media_name`, `TAGS`) REGEXP ?) ";
-    public String UPDATE_ARTIST = "UPDATE ARTIST_MASTER set  `ARTIST_NAME` =? , `ARTIST_DESCRIPTION` = ?, `BIRTHDAY` = ? , `TAGS` =? , `NATIONALITY` =? , `AGE` =? , `GENERE` = ? , `FIRST_NAME`=? , `LAST_NAME`= ? ,`NICK_NAME`=?, `PROFILE_PICTURE`= ?, `FB_URL`= ?, `INSTAGRAM_URL`= ?, `PINTREST_URL`= ?, `YOUTUBE_URL`= ?, `BON2_URL`= ? where `ARTIST_ID`= ?";
+    public String UPDATE_ARTIST = "UPDATE ARTIST_MASTER set  `ARTIST_NAME` =? , `ARTIST_DESCRIPTION` = ?, `BIRTHDAY` = ? , `TAGS` =? , `NATIONALITY` =? , `AGE` =? , `GENERE` = ? , `FIRST_NAME`=? , `LAST_NAME`= ? ,`NICK_NAME`=?, `PROFILE_PICTURE`= ?, `FB_URL`= ?, `INSTAGRAM_URL`= ?, `PINTREST_URL`= ?, `YOUTUBE_URL`= ?, `BON2_URL`= ?,`GENERAL_CATEGORY`=? where `ARTIST_ID`= ?";
     public String UPDATE_ARTIST_USER = "UPDATE ARTIST_MASTER set  artist_user_id = ? where `ARTIST_ID`= ?";
     public String FORGOT_PASSWORD = "SELECT email,password FROM user_master  where email = ?";
     public String RESET_PASSWORD = "UPDATE user_master set password = ? where email = ? and password=?";
@@ -272,4 +277,7 @@ public interface SQLConstants {
     public String UPDATE_USER_NOTIFICATION_TOKEN = "update user_master set  NOTIFICATION_TOKEN =?  where user_id = ? ";
     public String GET_POSTS_USER_TAGGED_IN = "select " + MEDIA_COLUMNS
 	    + ",u.*,lm.USER_ID as like_user_id  from media_master m  left join like_master lm on lm.MEDIA_ID = m.MEDIA_ID and lm.USER_ID = ? , user_master u  where m.flag!= 'y' and (m.METADATA_FILE_PATH like '%USER_ID_OBJ%' or m.TITLE like '%user_id_tag%' or m.DESCRIPTION like '%user_id_tag%') and m.file_type !='video' and m.UPLOADER = u.USER_ID ";
+    public String GET_MEDIA_IN_SERIES = "select " + MEDIA_COLUMNS
+	    + ",u.* from media_master m, user_master u  where m.flag!= 'y' and m.UPLOADER = u.USER_ID and m.series_id = ?";
+
 }

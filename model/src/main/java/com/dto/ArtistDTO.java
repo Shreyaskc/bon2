@@ -24,4 +24,5 @@ public class ArtistDTO extends AuthDTO {
     public Boolean following;
     public String uploader;
     public String artistUserId;
+    public String generalCategory;
 }
