@@ -5422,6 +5422,7 @@ public class DAO {
 	    params.add(dto.cast);
 	    params.add(dto.isFeatured);
 	    params.add(dto.featuredImage);
+	    params.add(dto.genre);
 	    int count = db.executeUpdate(query, params);
 	    if (count > 0) {
 		return seriesId;
@@ -5448,10 +5449,16 @@ public class DAO {
 	Database db = new Database();
 	try {
 	    String query = SQLConstants.GET_SERIES.toLowerCase();
+	    LinkedList<Object> paramList = new LinkedList<Object>();
+
+	    if(StringUtils.isEmpty(dto.genre)) {
+	    	query+=" where genre = ? ";
+	    	  paramList.add(dto.genre);
+	    }
+	    
 	    query += " order by created_date desc limit " + (dto.startRange - 1) + ","
 		    + (dto.endRange - dto.startRange + 1);
 	    LOG.debug("query>>>>" + query);
-	    LinkedList<Object> paramList = new LinkedList<Object>();
 //    	    paramList.add(dto.userId);
 	    db.executeQuery(query, paramList);
 	    LinkedList<SeriesPaginatedRequest> responseList = seriesResponseProduce(db);
@@ -5479,6 +5486,7 @@ public class DAO {
 	    series.cast = db.cRowSet.getString("cast");
 	    series.isFeatured = db.cRowSet.getString("is_featured");
 	    series.featuredImage = db.cRowSet.getString("featured_image");
+	    series.genre = db.cRowSet.getString("genre");
 	    responseList.add(series);
 	}
 	return responseList;
