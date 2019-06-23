@@ -5420,7 +5420,8 @@ public class DAO {
 	    params.add(dto.director);
 	    params.add(dto.producer);
 	    params.add(dto.cast);
-
+	    params.add(dto.isFeatured);
+	    params.add(dto.featuredImage);
 	    int count = db.executeUpdate(query, params);
 	    if (count > 0) {
 		return seriesId;
@@ -5476,6 +5477,8 @@ public class DAO {
 	    series.director = db.cRowSet.getString("director");
 	    series.producer = db.cRowSet.getString("producer");
 	    series.cast = db.cRowSet.getString("cast");
+	    series.isFeatured = db.cRowSet.getString("is_featured");
+	    series.featuredImage = db.cRowSet.getString("featured_image");
 	    responseList.add(series);
 	}
 	return responseList;
