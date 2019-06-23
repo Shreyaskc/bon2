@@ -10,4 +10,5 @@ public class SeriesPaginatedRequest extends PaginatedRequest {
 	public String cast;
 	public String isFeatured;
 	public String featuredImage;
+	public String genre;
 }

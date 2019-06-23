@@ -218,7 +218,7 @@ public interface SQLConstants {
 
     public String GET_SERIES = "select * from series_master ";
     public String DELETE_SCHEDULED_MEDIA = "DELETE FROM schedule_master WHERE schedule_id=? ";
-    public String INSERT_SERIES = " insert into series_master (series_id, title, description, thumbnail, director, producer, cast,is_featured,featured_image) values (?,?,?,?,?,?,?,?,?)";
+    public String INSERT_SERIES = " insert into series_master (series_id, title, description, thumbnail, director, producer, cast,is_featured,featured_image,genre) values (?,?,?,?,?,?,?,?,?,?)";
 
     // #blockImplemented
     public String GET_MEDIA_COMMENT_COUNT = "select count(1) comment_count  from media_comments where media_id = ?  group by  media_id ";
