@@ -5451,7 +5451,7 @@ public class DAO {
 	    String query = SQLConstants.GET_SERIES.toLowerCase();
 	    LinkedList<Object> paramList = new LinkedList<Object>();
 
-	    if(StringUtils.isEmpty(dto.genre)) {
+	    if(!StringUtils.isEmpty(dto.genre)) {
 	    	query+=" where genre = ? ";
 	    	  paramList.add(dto.genre);
 	    }
