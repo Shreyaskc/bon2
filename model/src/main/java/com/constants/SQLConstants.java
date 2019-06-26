@@ -246,8 +246,8 @@ public interface SQLConstants {
 
     public String SEARCH_PRODUCT_3 = "SELECT * FROM product_master  where concat_ws(' ', `PRODUCT_NAME`, `BRAND_NAME`) REGEXP ? ";
     public String SEARCH_PRODUCT = "select * from (SELECT * FROM product_master  where MATCH(PRODUCT_NAME) AGAINST(? ) UNION SELECT * FROM product_master  where MATCH(BRAND_NAME) AGAINST(? )UNION SELECT * FROM product_master  where MATCH(DESCRIPTION) AGAINST(? )) as t1  ";
-    public String CREATE_PRODUCT = "INSERT INTO product_master( `product_name`, `brand_name`, `website`, `picture`, `shop_link_1`, `shop_link_2`, `shop_link_3`, `shop_link_4`, `shop_link_5`, `description`,general_category,sku) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-    public String UPDATE_PRODUCT = "UPDATE product_master set  `product_name`=?, `brand_name`=?, `website`=?, `picture`=?, `shop_link_1`=?, `shop_link_2`=?, `shop_link_3`=?, `shop_link_4`=?, `shop_link_5`=?, `description`=? , general_category= ?,sku=? where `product_id` = ?";
+    public String CREATE_PRODUCT = "INSERT INTO product_master( `product_name`, `brand_name`, `website`, `picture`, `shop_link_1`, `shop_link_2`, `shop_link_3`, `shop_link_4`, `shop_link_5`, `description`,general_category,sku,keywords) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    public String UPDATE_PRODUCT = "UPDATE product_master set  `product_name`=?, `brand_name`=?, `website`=?, `picture`=?, `shop_link_1`=?, `shop_link_2`=?, `shop_link_3`=?, `shop_link_4`=?, `shop_link_5`=?, `description`=? , general_category= ?,sku=?,keywords=? where `product_id` = ?";
     public String DELETE_PRODUCT = "DELETE FROM product_master WHERE PRODUCT_ID=? ";
     public String GET_USER_BLOCKED_USER = "select blocked_user_id from user_blocked where (user_id = ? and blocked_user_id= ?) or (user_id = ? and blocked_user_id= ?)  ";
 

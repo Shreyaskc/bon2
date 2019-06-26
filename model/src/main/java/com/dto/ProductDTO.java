@@ -15,4 +15,5 @@ public class ProductDTO extends AuthDTO {
     public String shopLink5;
     public String generalCategory;
     public String sku;
+    public String keywords;
 }

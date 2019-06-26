@@ -6115,6 +6115,7 @@ public class DAO {
 		product.shopLink5 = db.cRowSet.getString("shop_link_5");
 		product.generalCategory = db.cRowSet.getString("general_category");
 		product.sku = db.cRowSet.getString("sku");
+		product.keywords = db.cRowSet.getString("keywords");
 		productList.add(product);
 	    }
 	} catch (Exception e) {
@@ -6152,6 +6153,7 @@ public class DAO {
 	    params.add(dto.productDescription);
 	    params.add(dto.generalCategory);
 	    params.add(dto.sku);
+	    params.add(dto.keywords);
 	    int count = db.executeUpdate(query, params);
 	    if (count <= 0) {
 		throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),
@@ -6221,6 +6223,7 @@ public class DAO {
 	    params.add(dto.productDescription);
 	    params.add(dto.generalCategory);
 	    params.add(dto.sku);
+	    params.add(dto.keywords);
 	    params.add(dto.productId);
 	    int count = db.executeUpdate(query, params);
 	    if (count <= 0) {
