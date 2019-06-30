@@ -6082,10 +6082,8 @@ public class DAO {
 	    throw new SystemException(ErrorCodes.EMPTY_SEARCH_STRING, ConfigReader.getObject().getErrorConfig(),
 		    ErrorCodes.StatusCodes.FAILURE, null);
 	}
-	boolean nonThree = false;
 	if (searchString.length() > 3) {
 	    query = SQLConstants.SEARCH_PRODUCT.toLowerCase();
-	    nonThree = true;
 	}
 	query += (" limit " + (dto.startRange - 1) + "," + (dto.endRange - dto.startRange + 1));
 	LinkedList<ProductDTO> productList = new LinkedList<ProductDTO>();
@@ -6093,11 +6091,6 @@ public class DAO {
 	try {
 	    LinkedList<Object> paramList = new LinkedList<Object>();
 	    paramList.add(searchString);
-	    if (nonThree) {
-		paramList.add(searchString);
-		paramList.add(searchString);
-		paramList.add(searchString);
-	    }
 	    LOG.debug("query>>>>" + query.toString());
 
 	    db.executeQuery(query.toString(), paramList);
