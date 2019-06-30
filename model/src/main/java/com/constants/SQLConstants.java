@@ -245,7 +245,7 @@ public interface SQLConstants {
     public String DELETE_ARTIST_MEDIA = "DELETE FROM ARTIST_MEDIA WHERE ARTIST_ID=? ";
 
     public String SEARCH_PRODUCT_3 = "SELECT * FROM product_master  where concat_ws(' ', `PRODUCT_NAME`, `BRAND_NAME`, `keywords`) REGEXP ? ";
-    public String SEARCH_PRODUCT = "SELECT * FROM product_master  where MATCH(PRODUCT_NAME,BRAND_NAME,DESCRIPTION,keywords) AGAINST(?)   ";
+    public String SEARCH_PRODUCT = "SELECT * FROM product_master  where MATCH(PRODUCT_NAME,BRAND_NAME,keywords) AGAINST(?)   ";
     public String CREATE_PRODUCT = "INSERT INTO product_master( `product_name`, `brand_name`, `website`, `picture`, `shop_link_1`, `shop_link_2`, `shop_link_3`, `shop_link_4`, `shop_link_5`, `description`,general_category,sku,keywords) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
     public String UPDATE_PRODUCT = "UPDATE product_master set  `product_name`=?, `brand_name`=?, `website`=?, `picture`=?, `shop_link_1`=?, `shop_link_2`=?, `shop_link_3`=?, `shop_link_4`=?, `shop_link_5`=?, `description`=? , general_category= ?,sku=?,keywords=? where `product_id` = ?";
     public String DELETE_PRODUCT = "DELETE FROM product_master WHERE PRODUCT_ID=? ";
