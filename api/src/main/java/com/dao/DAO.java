@@ -6096,6 +6096,7 @@ public class DAO {
 	    if (nonThree) {
 		paramList.add(searchString);
 		paramList.add(searchString);
+		paramList.add(searchString);
 	    }
 	    LOG.debug("query>>>>" + query.toString());
 
