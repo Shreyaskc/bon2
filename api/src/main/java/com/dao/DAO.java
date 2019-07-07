@@ -2778,10 +2778,11 @@ public class DAO {
 		query += SQLConstants.GET_PUBLIC_FEED_FOR_BUSINESS.toLowerCase();
 		userTypeFlag = true;
 	    }
-	    query += SQLConstants.GET_PUBLIC_FEED_POSTFIX.toLowerCase();
 	    if (!requestDTO.isAdmin) {
-		query += SQLConstants.MEDIA_FLAG;
-	    }
+			query += SQLConstants.MEDIA_FLAG;
+		 }
+	    query += SQLConstants.GET_PUBLIC_FEED_POSTFIX.toLowerCase();
+	  
 	    query += " limit " + (requestDTO.startRange - 1) + "," + (requestDTO.endRange - requestDTO.startRange + 1);
 	    LOG.debug("query>>>>" + query);
 	    LinkedList<Object> paramList = new LinkedList<Object>();
@@ -2801,6 +2802,35 @@ public class DAO {
 	return responseList;
     }
 
+
+	public boolean addViews(SearchMediaRequest dto) throws Exception {
+		if (StringUtils.isEmpty(dto.mediaId)) {
+			throw new SystemException(ErrorCodes.INVALID_USER_ID, ConfigReader.getObject().getErrorConfig(),
+					ErrorCodes.StatusCodes.FAILURE, null);
+		}
+		Database db = new Database();
+		try {
+
+			String query = SQLConstants.UPDATE_ADD_VIEWS.toLowerCase();
+
+			LOG.debug("query>>>>" + query);
+
+			LinkedList<Object> params = new LinkedList<>();
+			params.add(dto.mediaId);
+			db.executeUpdate(query, params);
+
+		} catch (Exception e) {
+			LOG.error("There was an error in DB query " + e.getMessage());
+			throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),
+					ErrorCodes.StatusCodes.FAILURE, null);
+		} finally {
+			closeDbConnection(db);
+		}
+
+		return true;
+	}
+    
+    
     public LinkedList<FeedResponseDTO> getTrendingFeed(PaginatedRequest requestDTO) throws Exception {
 	if (!validateUser(requestDTO.userId, requestDTO.accessToken)) {
 	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),

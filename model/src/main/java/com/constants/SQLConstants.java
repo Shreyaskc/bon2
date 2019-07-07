@@ -279,5 +279,5 @@ public interface SQLConstants {
 	    + ",u.*,lm.USER_ID as like_user_id  from media_master m  left join like_master lm on lm.MEDIA_ID = m.MEDIA_ID and lm.USER_ID = ? , user_master u  where m.flag!= 'y' and (m.METADATA_FILE_PATH like '%USER_ID_OBJ%' or m.TITLE like '%user_id_tag%' or m.DESCRIPTION like '%user_id_tag%') and m.file_type !='video' and m.UPLOADER = u.USER_ID ";
     public String GET_MEDIA_IN_SERIES = "select " + MEDIA_COLUMNS
 	    + ",u.* from media_master m, user_master u  where m.flag!= 'y' and m.UPLOADER = u.USER_ID and m.series_id = ?";
-
+    public String UPDATE_ADD_VIEWS = "update media_master set views = (case when views is null then 1 else views + 1 end) where media_id = ? ";
 }

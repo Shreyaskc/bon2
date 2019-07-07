@@ -1258,7 +1258,9 @@ public class BusinessLayer {
 	B2Dao.updateArtistUser(artist);
 	return user;
     }
-
+	public boolean addViews(SearchMediaRequest dto) throws Exception {
+		return B2Dao.addViews(dto);
+	}
     public boolean updateArtistUser(RegisterUserDTO dto) throws Exception {
 	if (!validateUser(dto.userId, dto.accessToken)) {
 	    throw new SystemException(ErrorCodes.INVALID_USER, ConfigReader.getObject().getErrorConfig(),

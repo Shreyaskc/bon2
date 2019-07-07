@@ -1221,6 +1221,37 @@ public class BaseService {
 	// LOG.info("Response String >>> "+resStr);
 	return resStr;
     }
+    
+	@POST
+	@Path("/addViews")
+	public String addViews(MultivaluedMap<String, String> params) throws Exception {
+		long start = System.currentTimeMillis();
+		String reqStr = params.get("data").get(0);
+		LOG.info("Request String >>> " + reqStr);
+
+		SearchMediaRequest DTO;
+		try {
+			initRoutine();
+			DTO = (SearchMediaRequest) ServiceHelper.buildJsonString(reqStr, SearchMediaRequest.class);
+			obj= BL.addViews(DTO);
+			responseDTO.setResponseStatus(true);
+			resStr = ServiceHelper.buildJsonString(responseDTO);
+		} catch (SystemException e) {
+			resStr = ServiceHelper.buildJsonString(ExceptionHandler.getServiceResponseErrorMessage(e, errorMessages));
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+			SystemException ex = new SystemException(e, ErrorCodes.GENERIC_EXCEPTION,
+					ConfigReader.getObject().getErrorConfig(), ErrorCodes.StatusCodes.FAILURE, null);
+			resStr = ServiceHelper.buildJsonString(ExceptionHandler.getServiceResponseErrorMessage(ex, errorMessages));
+			LOG.info(e.getMessage());
+		}
+
+		long end = System.currentTimeMillis();
+		LOG.info("Total time taken>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  " + (end - start));
+//		resStr = "{'cc':'cc'}";//ServiceHelper.buildJsonString(responseDTO);
+		return resStr;
+	}
 
     @POST
     @Path("/deleteArtist")
