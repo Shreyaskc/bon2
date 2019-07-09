@@ -75,7 +75,7 @@ public interface Constants {
     String APP_PROPS = "application.properties";
     String FIREBASE_JSON = "firebase.json";
     String MAIL_TEMPLATE_FILE = "mailTemplate.properties";
-    String WELCOME_MAIL_TEMPLATE_FILE = "welcomeMailTemplate.properties";
+    String WELCOME_MAIL_TEMPLATE_FILE = "welcomeMailTemplateNew.properties";
     String DEFAULT_PROFILE_PIC = "DEFAULT_PROFILE_PIC";
     String ACTIVITY_TEXT = "ACTIVITY_TEXT";
     String VIEW_ON_BON2 = "View on Bon2";
