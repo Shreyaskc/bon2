@@ -2698,6 +2698,19 @@ public class DAO {
 	    paramList.add(requestDTO.targetUserId);
 	    db.executeQuery(query, paramList);
 	    responseList = feedResponseProduce(db, requestDTO.userId);
+	    if (responseList==null || responseList.size()==0) {
+	    	    query = SQLConstants.GET_FOLLOWING_FEED_NO_FOLLOWER.toLowerCase();
+	   	    if (!requestDTO.isAdmin) {
+	   		query += SQLConstants.MEDIA_FLAG;
+	   	    }
+	   	    query += " order by m.created_date desc limit " + (requestDTO.startRange - 1) + ","
+	   		    + (requestDTO.endRange - requestDTO.startRange + 1);
+	   	    LOG.debug("query>>>>" + query);
+	   	   paramList = new LinkedList<Object>();
+	   	    paramList.add(requestDTO.userId);
+	   	    db.executeQuery(query, paramList);
+	   	    responseList = feedResponseProduce(db, requestDTO.userId);
+		}
 	} catch (Exception e) {
 	    LOG.error("There was an error in DB query " + e.getMessage());
 	    throw new SystemException(ErrorCodes.GENERIC_EXCEPTION, ConfigReader.getObject().getErrorConfig(),

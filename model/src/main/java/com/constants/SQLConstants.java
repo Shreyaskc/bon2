@@ -49,6 +49,13 @@ public interface SQLConstants {
     public String EMAIL_PLACEHOLDER = "'EMAIL_PLACEHOLDER'";
     public String PHONE_PLACEHOLDER = "'PHONE_PLACEHOLDER'";
     public String USER_FOLLOWS = "select user_id from user_following where FOLLOWING_USER_ID= ? and USER_ID = ? ";
+    
+    public String GET_FOLLOWING_FEED_NO_FOLLOWER = "select distinct " + MEDIA_COLUMNS
+    	    + ",u.*,lm.USER_ID as like_user_id,m.created_date as cr_date from  media_master m left join like_master lm on lm.MEDIA_ID = m.MEDIA_ID and lm.USER_ID = ?, user_master u , "
+    	    + "(select media_id,user_id from user_media where user_id in "
+    	    + " (select DISTINCT  u_m.USER_ID as user_id from  user_master u_m join  media_master mm on mm.uploader = u_m.user_id where u_m.last_login <> '' group by(UPLOADER) order by date(last_login) desc ) "
+    	    + "and ( privilege = 'public' OR privilege = 'followers'))  a"
+    	    + " where m.media_id = a.media_id and lower(m.file_type)!= 'video' and u.user_id = a.user_id";
     public String GET_FOLLOWING_FEED = "select distinct " + MEDIA_COLUMNS
 	    + ",u.*,lm.USER_ID as like_user_id,m.created_date as cr_date from  media_master m left join like_master lm on lm.MEDIA_ID = m.MEDIA_ID and lm.USER_ID = ?, user_master u , "
 	    + "(select media_id,user_id from user_media where user_id in (select following_user_id from user_following where user_id = ?) "
