@@ -4629,6 +4629,9 @@ public class DAO {
 	media.thumbnail = db.cRowSet.getString("THUMBNAIL");
 	media.description = db.cRowSet.getString("DESCRIPTION");
 	media.artistId = db.cRowSet.getString("ARTIST_ID");
+	if(StringUtils.isEmpty(media.artistId)) {
+		media.artistId = media.uploader;
+	}
 	media.albumId = db.cRowSet.getString("ALBUM_ID");
 	media.mediaLength = db.cRowSet.getString("MEDIA_LENGTH");
 	media.rank = db.cRowSet.getString("RANK");
