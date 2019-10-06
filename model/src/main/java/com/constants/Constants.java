@@ -78,7 +78,7 @@ public interface Constants {
     String WELCOME_MAIL_TEMPLATE_FILE = "welcomeMailTemplateNew.properties";
     String DEFAULT_PROFILE_PIC = "DEFAULT_PROFILE_PIC";
     String ACTIVITY_TEXT = "ACTIVITY_TEXT";
-    String VIEW_ON_BON2 = "View on Bon2";
+    String VIEW_ON_BON2 = "View on BON2";
     String REJECT = "Reject";
     String APPROVE = "Approve";
     String ACTIVITY_TITLE = "ACTIVITY_TITLE";
