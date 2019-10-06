@@ -90,7 +90,7 @@ public interface Constants {
     String N = "N";
     String N_LOWER_CASE = "n";
     String POSTFIX_REPLACEMENT = "POSTFIX_REPLACEMENT";
-    String URL_REPLACEMENT = "https://bon2.tv/POSTFIX_REPLACEMENT";
+    String URL_REPLACEMENT = "https://BON2tv.com/POSTFIX_REPLACEMENT";
     String STATION_NAME = "STATION_NAME";
     String MYSQL_DB_URL = "MYSQL_DB_URL";
     String MYSQL_DB_USERNAME = "MYSQL_DB_USERNAME";
