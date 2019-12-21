@@ -31,7 +31,7 @@ public class DAOHelper {
 		prefix = prefix==null?"":prefix;
 		postFix = postFix==null?"":postFix;
 		String id =prefix+guid.toString()+postFix;
-		System.out.println(id);
+		//System.out.println(id);
 		return id;
 	}
 }

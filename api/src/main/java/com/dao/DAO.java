@@ -3076,7 +3076,7 @@ public class DAO {
 	    // MEDIA_MASTER(MEDIA_ID,FILE_NAME,FILE_TYPE,MUSIC_PREF_ID,UPLOADER,TAGS,PATH,IS_AD,SKIP_FLAG,LOCATION,ARTIST,THUMBNAIL,DESCRIPTION,ARTIST_ID,ALBUM_ID,MEDIA_LENGTH)
 	    // VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	    String activityId = DAOHelper.guidGenerator(Constants.ACTIVITY_PREFIX, "");
-
+	    String urlId = DAOHelper.guidGenerator("", "");
 	    String query = SQLConstants.INSERT_MEDIA.toLowerCase();
 	    LOG.debug("query>>>>" + query);
 
@@ -3117,6 +3117,7 @@ public class DAO {
 	    params.add(dto.isScheduled);
 	    params.add(dto.seriesId);
 	    params.add(dto.episodeNumber);
+	    params.add(urlId);
 
 	    int count = db.executeUpdate(query, params);
 	    if (count <= 0) {
@@ -4689,6 +4690,8 @@ public class DAO {
 	media.stationList = db.cRowSet.getString("STATION_LIST");
 	media.isFeatured = db.cRowSet.getString("IS_FEATURED");
 	media.projectName = db.cRowSet.getString("PROJECT_NAME");
+	media.urlId = db.cRowSet.getString("url_id");
+
 	return media;
     }
 
@@ -6519,5 +6522,5 @@ public class DAO {
 	}
 	return null;
     }
-
+    
 }
