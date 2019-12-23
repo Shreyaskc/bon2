@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.common.CommonUtils;
 import com.common.ConfigReader;
+import com.common.RandomString;
 import com.constants.Constants;
 import com.constants.ErrorCodes;
 import com.constants.SQLConstants;
@@ -3076,7 +3078,9 @@ public class DAO {
 	    // MEDIA_MASTER(MEDIA_ID,FILE_NAME,FILE_TYPE,MUSIC_PREF_ID,UPLOADER,TAGS,PATH,IS_AD,SKIP_FLAG,LOCATION,ARTIST,THUMBNAIL,DESCRIPTION,ARTIST_ID,ALBUM_ID,MEDIA_LENGTH)
 	    // VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	    String activityId = DAOHelper.guidGenerator(Constants.ACTIVITY_PREFIX, "");
-	    String urlId = DAOHelper.guidGenerator("", "");
+    	RandomString gen = new RandomString(12, ThreadLocalRandom.current());
+
+	    String urlId = gen.nextString();
 	    String query = SQLConstants.INSERT_MEDIA.toLowerCase();
 	    LOG.debug("query>>>>" + query);
 
